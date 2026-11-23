@@ -1610,7 +1610,7 @@
     /*************************************************************************
      * 7. GEMINI AI ENGINE
      *************************************************************************/
-    const apiKey = "";
+    const apiKey = "AQ.Ab8RN6LXK-D4vpqRgJ3-6-rAGfSTTMg0actU3nuRLmXAVqnx7w";
 
     async function callGeminiAPI({ prompt, systemInstruction = "", responseSchema = null }) {
       const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
@@ -3041,13 +3041,20 @@ Reply to ${uni.userPersona.name} as 1 or 2 natural lowercase/casual texting bubb
         rewardStatProgress({ charId: char.id, chemDelta: delta, auraDelta: 0.2, xp: 35 });
         saveState();
       } catch (err) {
-        const errLive = getLiveFormattedTime();
-        char.messages.push({ sender: 'ai', text: 'bold of you to say that. keep talking.', time: errLive.chatHeader, exactTime: errLive.timeStr });
-      } finally {
-        typingEl.classList.add('hidden');
-        renderChatMessages();
-      }
-    }
+  const errLive = getLiveFormattedTime();
+  const fallbackReplies = [
+    "oi, my connection glitched for a second—say that again?",
+    "hold on, my owl got lost mid-flight. repeat that?",
+    "hang on, signal dropped in the dungeons. what were you saying?"
+  ];
+  const picked = fallbackReplies[Math.floor(Math.random() * fallbackReplies.length)];
+  char.messages.push({
+    sender: 'ai',
+    text: apiKey ? picked : "add your Gemini API key in `const apiKey` first, babe, so I can actually reply properly!",
+    time: errLive.chatHeader,
+    exactTime: errLive.timeStr
+  });
+}
 
     /*************************************************************************
      * 14. TAB 2: ROMIO / MULTI-UNIVERSE TIKTOK SLIDE IMPORT
