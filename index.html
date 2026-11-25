@@ -1530,24 +1530,25 @@
     /*************************************************************************
      * 7. GEMINI AI ENGINE (WITH SMART CONTEXTUAL OFFLINE FALLBACK)
      *************************************************************************/
-    async function callGeminiAPI({ prompt, systemInstruction = "", responseSchema = null }) {
+  async function callGeminiAPI({ prompt, systemInstruction = "", responseSchema = null }) {
       const activeKey = (appState && appState.geminiApiKey) ? appState.geminiApiKey.trim() : "";
       if (!activeKey) throw new Error('NO_API_KEY');
 
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${activeKey}`;
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`;
       const lang = getActiveLanguageObj();
       const fullSystemInstruction = `${systemInstruction}\n\nMANDATORY LANGUAGE RULE: ${lang.instruction}`;
 
       const payload = {
         contents: [{ parts: [{ text: prompt }] }],
-        systemInstruction: { parts: [{ text: fullSystemInstruction }] }
+        systemInstruction: { parts: [{ text: fullSystemInstruction }] },
+        generationConfig: {
+          temperature: 0.9
+        }
       };
 
       if (responseSchema) {
-        payload.generationConfig = {
-          responseMimeType: "application/json",
-          responseSchema: responseSchema
-        };
+        payload.generationConfig.responseMimeType = "application/json";
+        payload.generationConfig.responseSchema = responseSchema;
       }
 
       const delays = [600, 1400];
@@ -1555,7 +1556,10 @@
         try {
           const response = await fetch(apiUrl, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Content-Type': 'application/json',
+              'x-goog-api-key': activeKey
+            },
             body: JSON.stringify(payload)
           });
           if (!response.ok) throw new Error(`HTTP ${response.status}`);
