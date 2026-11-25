@@ -86,8 +86,8 @@
             <input id="auth-email" type="email" placeholder="mywa@hogwarts.edu" onkeydown="if(event.key==='Enter') submitEmailLogin()" class="w-full bg-[#121212] border border-[#2E2E2E] focus:border-[#1D9BF0] rounded-xl px-3.5 py-3 text-sm text-white placeholder-zinc-500 outline-none" />
           </div>
           <div>
-            <label class="block text-[11px] font-semibold text-zinc-400 mb-1">Password <span class="text-zinc-600">(Optional for local save)</span></label>
-            <input id="auth-password" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter') submitEmailLogin()" class="w-full bg-[#121212] border border-[#2E2E2E] focus:border-[#1D9BF0] rounded-xl px-3.5 py-3 text-sm text-white placeholder-zinc-500 outline-none" />
+            <label class="block text-[11px] font-semibold text-zinc-400 mb-1">Gemini API Key <span class="text-zinc-600">(Optional — free at aistudio.google.com)</span></label>
+            <input id="auth-apikey" type="password" placeholder="AIzaSy..." onkeydown="if(event.key==='Enter') submitEmailLogin()" class="w-full bg-[#121212] border border-[#2E2E2E] focus:border-[#1D9BF0] rounded-xl px-3.5 py-3 text-sm text-white placeholder-zinc-500 outline-none" />
           </div>
         </div>
 
@@ -97,8 +97,8 @@
           Sign In with Email
         </button>
 
-        <button type="button" onclick="submitEmailWithoutPassword()" class="w-full py-2.5 rounded-full bg-[#242424] hover:bg-[#2E2E2E] text-xs font-semibold text-zinc-300 transition">
-          Instant Continue (Email Only)
+        <button type="button" onclick="instantPreviewLaunch()" class="w-full py-2.5 rounded-full bg-[#4ADE80]/15 hover:bg-[#4ADE80]/25 border border-[#4ADE80]/40 text-xs font-bold text-[#4ADE80] transition">
+          ⚡ Instant Preview Mode (No Key Needed)
         </button>
       </div>
 
@@ -112,23 +112,26 @@
   <div id="app-shell" class="hidden min-h-screen max-w-[480px] mx-auto bg-[#121212] border-x border-[#242424] flex flex-col relative">
 
     <!-- Top Sticky Header -->
-    <header class="sticky top-0 z-30 bg-[#121212]/95 backdrop-blur-md border-b border-[#242424] px-3.5 py-2.5 flex items-center justify-between gap-2">
-      <button type="button" onclick="openUniverseModal()" class="flex items-center gap-1.5 bg-[#1E1E1E] hover:bg-[#262626] border border-[#2E2E2E] px-2.5 py-1.5 rounded-full min-w-0 transition">
+    <header class="sticky top-0 z-30 bg-[#121212]/95 backdrop-blur-md border-b border-[#242424] px-3 py-2 flex items-center justify-between gap-1.5">
+      <button type="button" onclick="openUniverseModal()" class="flex items-center gap-1 bg-[#1E1E1E] hover:bg-[#262626] border border-[#2E2E2E] px-2.5 py-1.5 rounded-full min-w-0 transition">
         <span id="header-universe-emoji" class="text-sm">⚡</span>
-        <span id="header-universe-name" class="text-xs font-bold text-white truncate max-w-[115px]">Hogwarts Universe</span>
+        <span id="header-universe-name" class="text-xs font-bold text-white truncate max-w-[100px]">Hogwarts</span>
         <span class="text-[10px] text-zinc-400">▾</span>
       </button>
 
-      <button type="button" onclick="openTimezoneModal()" class="flex flex-col items-center text-center px-2 py-0.5 rounded-lg hover:bg-[#1E1E1E] transition">
-        <span id="live-clock-display" class="text-[10px] font-semibold text-zinc-300 leading-tight">Mon, 23 Nov, 04:42 pm</span>
+      <button type="button" onclick="openTimezoneModal()" class="flex flex-col items-center text-center px-1.5 py-0.5 rounded-lg hover:bg-[#1E1E1E] transition">
+        <span id="live-clock-display" class="text-[10px] font-semibold text-zinc-300 leading-tight">Wed, 25 Nov, 09:56 am</span>
         <span id="live-tz-display" class="text-[9px] text-[#1D9BF0] font-bold uppercase tracking-wider">Kuala Lumpur</span>
       </button>
 
-      <div class="flex items-center gap-1.5 shrink-0">
-        <button type="button" onclick="openLanguageModal()" class="px-2.5 py-1.5 rounded-full bg-[#1E1E1E] hover:bg-[#262626] border border-[#2E2E2E] text-[11px] font-bold text-[#1D9BF0]">
-          <span id="header-lang-short">UK + MY Mix</span>
+      <div class="flex items-center gap-1 shrink-0">
+        <button type="button" onclick="openLanguageModal()" class="px-2 py-1.5 rounded-full bg-[#1E1E1E] hover:bg-[#262626] border border-[#2E2E2E] text-[10px] font-bold text-[#1D9BF0]">
+          <span id="header-lang-short">UK + MY</span>
         </button>
-        <button type="button" onclick="openInstallModal()" title="Install App to Phone" class="w-8 h-8 rounded-full bg-[#1E1E1E] hover:bg-[#262626] border border-[#2E2E2E] flex items-center justify-center text-xs">
+        <button type="button" onclick="openApiKeyModal()" title="Set Gemini API Key" class="px-2 py-1.5 rounded-full bg-[#1E1E1E] hover:bg-[#262626] border border-[#2E2E2E] text-[10px] font-bold text-[#4ADE80]">
+          🔑 AI
+        </button>
+        <button type="button" onclick="openInstallModal()" title="Install App to Phone" class="w-7 h-7 rounded-full bg-[#1E1E1E] hover:bg-[#262626] border border-[#2E2E2E] flex items-center justify-center text-xs">
           📲
         </button>
       </div>
@@ -155,7 +158,7 @@
 
       <button type="button" data-tab="universe" onclick="switchTab('universe')" class="nav-btn flex flex-col items-center justify-center gap-0.5 text-zinc-500">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
-        <span class="text-[10px] font-semibold">Romio / AU</span>
+        <span class="text-[10px] font-semibold">Link / AU</span>
       </button>
 
       <button type="button" data-tab="messages" onclick="switchTab('messages')" class="nav-btn relative flex flex-col items-center justify-center gap-0.5 text-zinc-500">
@@ -183,7 +186,12 @@
           <button type="button" onclick="closePostThread()" class="w-8 h-8 rounded-full bg-[#1E1E1E] text-white flex items-center justify-center font-bold">←</button>
           <h3 class="text-sm font-display font-bold text-white">Post</h3>
         </div>
-        <span id="thread-ratio-pill" class="hidden text-[11px] font-bold text-[#1D9BF0] animate-pulse">Cast replying...</span>
+        <div class="flex items-center gap-2">
+          <span id="thread-ratio-pill" class="hidden text-[11px] font-bold text-[#1D9BF0] animate-pulse">Cast replying...</span>
+          <button type="button" onclick="sparkThreadDrama()" class="px-3 py-1 rounded-full bg-[#1D9BF0]/15 border border-[#1D9BF0]/40 text-[11px] font-bold text-[#1D9BF0]">
+            🔥 Spark Drama
+          </button>
+        </div>
       </div>
 
       <div id="post-thread-content" class="flex-1 overflow-y-auto no-scrollbar pb-24"></div>
@@ -295,7 +303,7 @@
             <textarea id="edit-char-bio" rows="2" class="w-full bg-[#121212] border border-[#2E2E2E] rounded-xl p-2.5 text-xs text-white outline-none resize-none"></textarea>
           </div>
           <div>
-            <label class="block text-[11px] font-semibold text-zinc-400 mb-1">AI Personality & Voice</label>
+            <label class="block text-[11px] font-semibold text-zinc-400 mb-1">AI Personality & Voice Style</label>
             <textarea id="edit-char-personality" rows="2" class="w-full bg-[#121212] border border-[#2E2E2E] rounded-xl p-2.5 text-xs text-white outline-none resize-none"></textarea>
           </div>
         </div>
@@ -306,20 +314,24 @@
       </div>
     </div>
 
-    <!-- ==================== iMESSAGE CHAT ROOM OVERLAY ==================== -->
+    <!-- ==================== COZY PLUM iMESSAGE + MOCHICHAT ROOM OVERLAY ==================== -->
     <div id="chat-room-overlay" class="fixed inset-0 z-40 hidden flex-col bg-[#171316] max-w-[480px] mx-auto">
       <div class="flex flex-col h-full">
-        <div class="px-4 pt-3 pb-2.5 bg-[#171316]/95 border-b border-white/10 flex items-center justify-between">
+        <div class="px-4 pt-3 pb-2 bg-[#171316]/95 border-b border-white/10 flex items-center justify-between">
           <button type="button" onclick="closeChatRoom()" class="flex items-center gap-1.5 text-zinc-200 hover:text-white mt-1">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
             <span id="chat-unread-pill" class="w-5 h-5 rounded-full bg-[#b85d79] text-white text-[11px] font-bold flex items-center justify-center">2</span>
           </button>
 
           <button type="button" onclick="openProfileFromChatHeader()" class="flex flex-col items-center group -mt-0.5">
-            <div class="w-[46px] h-[46px] rounded-full overflow-hidden border border-white/15 shadow-lg group-active:scale-95 transition">
+            <div class="w-[44px] h-[44px] rounded-full overflow-hidden border border-white/15 shadow-lg group-active:scale-95 transition">
               <img id="chat-room-avatar" src="" alt="Avatar" class="w-full h-full object-cover" />
             </div>
-            <span id="chat-room-title" class="text-xs font-bold text-white mt-1 tracking-tight">Draco</span>
+            <div class="flex items-center gap-1.5 mt-1">
+              <span id="chat-room-title" class="text-xs font-bold text-white tracking-tight">Draco</span>
+              <span id="chat-streak-badge" class="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-300 font-bold">🔥 1d</span>
+            </div>
+            <span id="chat-mood-pill" class="text-[10px] text-[#b85d79] font-semibold mt-0.5">😏 Smirking</span>
           </button>
 
           <button type="button" onclick="resetCurrentChat()" title="Clear Chat" class="w-9 h-9 rounded-full bg-[#272225]/70 hover:bg-[#322c30] flex items-center justify-center text-zinc-400 hover:text-white mt-1 transition">
@@ -337,14 +349,52 @@
           </div>
         </div>
 
+        <!-- Gift Drawer -->
+        <div id="chat-gift-drawer" class="hidden px-3 py-2 bg-[#211b1e] border-t border-white/10">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-zinc-400">Send Gift (+Chemistry)</span>
+            <button type="button" onclick="toggleGiftDrawer()" class="text-xs text-zinc-400">✕</button>
+          </div>
+          <div class="grid grid-cols-4 gap-1.5">
+            <button type="button" onclick="sendChatGift('🍡 Strawberry Mochi', 1.2)" class="p-2 rounded-xl bg-[#2a2327] hover:bg-[#352c31] text-center">
+              <div class="text-base">🍡</div>
+              <div class="text-[9px] text-zinc-300 font-semibold mt-0.5">Mochi</div>
+            </button>
+            <button type="button" onclick="sendChatGift('🍺 Butterbeer', 1.5)" class="p-2 rounded-xl bg-[#2a2327] hover:bg-[#352c31] text-center">
+              <div class="text-base">🍺</div>
+              <div class="text-[9px] text-zinc-300 font-semibold mt-0.5">Butterbeer</div>
+            </button>
+            <button type="button" onclick="sendChatGift('💌 Secret Note', 2.0)" class="p-2 rounded-xl bg-[#2a2327] hover:bg-[#352c31] text-center">
+              <div class="text-base">💌</div>
+              <div class="text-[9px] text-zinc-300 font-semibold mt-0.5">Note</div>
+            </button>
+            <button type="button" onclick="sendChatGift('🐍 Silver Ring', 3.0)" class="p-2 rounded-xl bg-[#2a2327] hover:bg-[#352c31] text-center">
+              <div class="text-base">🐍</div>
+              <div class="text-[9px] text-zinc-300 font-semibold mt-0.5">Crest Ring</div>
+            </button>
+          </div>
+        </div>
+
+        <!-- RP Action Quick Chips -->
+        <div class="px-3 pt-2 bg-[#171316] flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+          <button type="button" onclick="insertRpChip('*smirks* ')" class="px-2.5 py-1 rounded-full bg-[#241f22] border border-white/10 text-[10px] text-zinc-300 shrink-0">*smirks*</button>
+          <button type="button" onclick="insertRpChip('*rolls eyes* ')" class="px-2.5 py-1 rounded-full bg-[#241f22] border border-white/10 text-[10px] text-zinc-300 shrink-0">*rolls eyes*</button>
+          <button type="button" onclick="insertRpChip('*leans closer* ')" class="px-2.5 py-1 rounded-full bg-[#241f22] border border-white/10 text-[10px] text-zinc-300 shrink-0">*leans closer*</button>
+          <button type="button" onclick="insertRpChip('*crosses arms* ')" class="px-2.5 py-1 rounded-full bg-[#241f22] border border-white/10 text-[10px] text-zinc-300 shrink-0">*crosses arms*</button>
+        </div>
+
         <div class="bg-[#171316] px-3 pb-4 pt-2">
-          <form onsubmit="handleSendChatMessage(event)" class="flex items-center gap-2.5">
-            <label title="Send Photo" class="w-10 h-10 rounded-full bg-[#272225] hover:bg-[#322c30] flex items-center justify-center text-zinc-300 cursor-pointer shrink-0 transition active:scale-95">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+          <form onsubmit="handleSendChatMessage(event)" class="flex items-center gap-2">
+            <label title="Send Photo" class="w-9 h-9 rounded-full bg-[#272225] hover:bg-[#322c30] flex items-center justify-center text-zinc-300 cursor-pointer shrink-0 transition active:scale-95">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
               <input type="file" accept="image/*" onchange="handleSendChatPhoto(event)" class="hidden" />
             </label>
 
-            <div class="flex-1 flex items-center bg-[#231e21] border border-[#322b2f] focus-within:border-[#b85d79]/70 rounded-full px-4 py-2">
+            <button type="button" onclick="toggleGiftDrawer()" title="Send Gift" class="w-9 h-9 rounded-full bg-[#272225] hover:bg-[#322c30] flex items-center justify-center text-sm shrink-0 transition active:scale-95">
+              🎁
+            </button>
+
+            <div class="flex-1 flex items-center bg-[#231e21] border border-[#322b2f] focus-within:border-[#b85d79]/70 rounded-full px-3.5 py-2">
               <input id="chat-message-input" type="text" autocomplete="off" oninput="toggleChatSendButtonIcon(this.value)" placeholder="Message Draco..." class="flex-1 bg-transparent text-[14px] text-white placeholder-zinc-500 outline-none" />
               <button type="submit" id="chat-send-action-btn" class="ml-2 text-zinc-400 hover:text-white transition flex items-center justify-center">
                 <svg id="icon-waveform" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -384,6 +434,13 @@
             <span id="story-badge" class="inline-block text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#4ADE80]/20 text-[#4ADE80]">Story</span>
             <p id="story-text" class="text-lg font-display font-bold text-white leading-relaxed"></p>
           </div>
+        </div>
+
+        <div class="px-3 pt-2 bg-black/80 flex items-center justify-center gap-3">
+          <button type="button" onclick="reactToStory('🔥')" class="px-3 py-1 rounded-full bg-white/10 text-sm">🔥</button>
+          <button type="button" onclick="reactToStory('😂')" class="px-3 py-1 rounded-full bg-white/10 text-sm">😂</button>
+          <button type="button" onclick="reactToStory('❤️')" class="px-3 py-1 rounded-full bg-white/10 text-sm">❤️</button>
+          <button type="button" onclick="reactToStory('👀')" class="px-3 py-1 rounded-full bg-white/10 text-sm">👀</button>
         </div>
 
         <form onsubmit="handleStoryReply(event)" class="p-3 bg-black/80 border-t border-white/10 flex items-center gap-2">
@@ -430,6 +487,23 @@
         </div>
         <button type="button" onclick="submitCreateActivity()" class="w-full py-3 rounded-full bg-[#1D9BF0] text-xs font-bold text-white">
           Send Activity Invite (+1.0% Chemistry)
+        </button>
+      </div>
+    </div>
+
+    <!-- ==================== GEMINI API KEY MODAL ==================== -->
+    <div id="apikey-modal" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center bg-black/85 p-0 sm:p-4">
+      <div class="w-full max-w-[480px] bg-[#181818] border-t sm:border border-[#2E2E2E] rounded-t-3xl sm:rounded-3xl p-5 space-y-4 animate-slide-up">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-base font-display font-bold text-white">Gemini AI Key 🔑</h3>
+            <p class="text-xs text-zinc-400">Saved locally on your device only (never uploaded)</p>
+          </div>
+          <button type="button" onclick="closeApiKeyModal()" class="p-2 rounded-full bg-[#242424] text-zinc-300">✕</button>
+        </div>
+        <input id="modal-apikey-input" type="password" placeholder="AIzaSy..." class="w-full bg-[#121212] border border-[#2E2E2E] focus:border-[#4ADE80] rounded-xl px-3.5 py-3 text-sm text-white outline-none" />
+        <button type="button" onclick="saveApiKeyFromModal()" class="w-full py-3 rounded-full bg-[#4ADE80] text-xs font-bold text-black shadow-lg">
+          Save API Key
         </button>
       </div>
     </div>
@@ -519,7 +593,7 @@
         <p class="font-bold text-white">Step 2: Add App Icon to Phone Home Screen</p>
         <p>1. Open the downloaded <strong class="text-white">StatusVerse.html</strong> in <strong class="text-white">Chrome</strong> (Android) or <strong class="text-white">Safari</strong> (iPhone).</p>
         <p>2. Tap <strong class="text-white">⋮</strong> (top right in Chrome) or <strong class="text-white">Share</strong> (Safari).</p>
-        <p>3. Tap <strong class="text-[#4ADE80]">"Add to Home screen"</strong> or <strong class="text-[#4ADE80]">"Install app"</strong> — the StatusVerse icon will appear right on your home screen like Status!</p>
+        <p>3. Tap <strong class="text-[#4ADE80]">"Add to Home screen"</strong> or <strong class="text-[#4ADE80]">"Install app"</strong> — the StatusVerse icon will appear right on your home screen!</p>
       </div>
 
       <div class="bg-[#121212] border border-[#2A2A2A] rounded-2xl p-4 space-y-2">
@@ -600,7 +674,7 @@
     const WORLD_LANGUAGES = [
       {
         code: 'uk_my_mix',
-        short: 'UK + MY Mix',
+        short: 'UK + MY',
         label: 'English (UK) + Bahasa Melayu Mix (Natural Gen Z)',
         instruction: 'Write naturally in a seamless mix of British English (UK spelling like colour, favourite, bloody, mate, brilliant, rubbish, proper) and conversational Bahasa Melayu (Manglish/Gen Z Malay slang like lah, wei, sumpah, gila, kau, aku, takkan, lepak). NEVER put English translations in brackets or parentheses.'
       },
@@ -617,24 +691,13 @@
         instruction: 'Write in natural, conversational Bahasa Melayu Malaysia (modern Gen Z / casual tone).'
       },
       { code: 'ar', short: 'العربية', label: 'Arabic (العربية)', instruction: 'Write naturally in Arabic.' },
-      { code: 'bn', short: 'বাংলা', label: 'Bengali (বাংলা)', instruction: 'Write naturally in Bengali.' },
       { code: 'zh_CN', short: '简体中文', label: 'Chinese Simplified (简体中文)', instruction: 'Write naturally in Simplified Chinese.' },
-      { code: 'zh_TW', short: '繁體中文', label: 'Chinese Traditional (繁體中文)', instruction: 'Write naturally in Traditional Chinese.' },
       { code: 'tl', short: 'Tagalog', label: 'Filipino / Tagalog', instruction: 'Write naturally in Filipino/Tagalog.' },
       { code: 'fr', short: 'Français', label: 'French (Français)', instruction: 'Write naturally in French.' },
-      { code: 'de', short: 'Deutsch', label: 'German (Deutsch)', instruction: 'Write naturally in German.' },
-      { code: 'hi', short: 'हिन्दी', label: 'Hindi (हिन्दी)', instruction: 'Write naturally in Hindi.' },
       { code: 'id', short: 'Indonesia', label: 'Indonesian (Bahasa Indonesia)', instruction: 'Write naturally in casual Bahasa Indonesia.' },
-      { code: 'it', short: 'Italiano', label: 'Italian (Italiano)', instruction: 'Write naturally in Italian.' },
       { code: 'ja', short: '日本語', label: 'Japanese (日本語)', instruction: 'Write naturally in Japanese.' },
       { code: 'ko', short: '한국어', label: 'Korean (한국어)', instruction: 'Write naturally in natural Korean.' },
-      { code: 'pt', short: 'Português', label: 'Portuguese (Português)', instruction: 'Write naturally in Portuguese.' },
-      { code: 'ru', short: 'Русский', label: 'Russian (Русский)', instruction: 'Write naturally in Russian.' },
-      { code: 'es', short: 'Español', label: 'Spanish (Español)', instruction: 'Write naturally in Spanish.' },
-      { code: 'ta', short: 'தமிழ்', label: 'Tamil (தமிழ்)', instruction: 'Write naturally in Tamil.' },
-      { code: 'th', short: 'ไทย', label: 'Thai (ภาษาไทย)', instruction: 'Write naturally in Thai.' },
-      { code: 'tr', short: 'Türkçe', label: 'Turkish (Türkçe)', instruction: 'Write naturally in Turkish.' },
-      { code: 'vi', short: 'Tiếng Việt', label: 'Vietnamese (Tiếng Việt)', instruction: 'Write naturally in Vietnamese.' }
+      { code: 'es', short: 'Español', label: 'Spanish (Español)', instruction: 'Write naturally in Spanish.' }
     ];
 
     const TIMEZONES = [
@@ -644,11 +707,9 @@
       'Asia/Jakarta',
       'Asia/Tokyo',
       'Asia/Seoul',
-      'Asia/Riyadh',
       'Asia/Dubai',
       'Australia/Sydney',
       'America/New_York',
-      'America/Los_Angeles',
       'UTC'
     ];
 
@@ -666,7 +727,7 @@
           stamp: `${timeStr} · ${dateStr}`
         };
       } catch (e) {
-        return { timeStr: '16:14', dateStr: '23 Nov 26', chatHeader: 'Monday 16:14', stamp: '16:14 · 23 Nov 26' };
+        return { timeStr: '09:56', dateStr: '25 Nov 26', chatHeader: 'Wednesday 09:56', stamp: '09:56 · 25 Nov 26' };
       }
     }
 
@@ -703,7 +764,7 @@
     }, 1000);
 
     /*************************************************************************
-     * 3. HARRY POTTER MOVIE CAST PORTRAITS + MOVIE-ACCURATE SVG FALLBACKS
+     * 3. HOGWARTS PORTRAITS (assets/<id>.jpg + SVG FALLBACKS)
      *************************************************************************/
     function makeMoviePortraitSvg({ hairColor = '#1c1917', skinColor = '#f1d5c2', robeColor = '#14532d', accentColor = '#d4af37', bg1 = '#1e293b', bg2 = '#09090b', isFemale = false, glasses = false, blonde = false, scar = false }) {
       const hair = blonde ? '#f3e5ab' : hairColor;
@@ -728,15 +789,12 @@
           </radialGradient>
         </defs>
         <rect width="240" height="240" fill="url(#bg)"/>
-        <path d="M35 240 L35 90 Q120 15 205 90 L205 240 Z" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
         ${hairBack}
         <rect x="106" y="128" width="28" height="30" rx="10" fill="${skinColor}"/>
         <path d="M44 240 C48 175, 82 154, 120 154 C158 154, 192 175, 196 240 Z" fill="${robeColor}"/>
         <polygon points="106,154 120,178 134,154" fill="#f8fafc"/>
         <polygon points="115,166 125,166 128,225 120,235 112,225" fill="${accentColor}"/>
         <ellipse cx="120" cy="98" rx="38" ry="44" fill="${skinColor}"/>
-        <path d="M93 88 Q103 84 112 88" stroke="#27272a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-        <path d="M128 88 Q137 84 147 88" stroke="#27272a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
         <circle cx="103" cy="98" r="3.5" fill="#18181b"/>
         <circle cx="137" cy="98" r="3.5" fill="#18181b"/>
         <path d="M111 120 Q120 124 129 120" stroke="#9f5f58" stroke-width="2.5" fill="none" stroke-linecap="round"/>
@@ -753,74 +811,23 @@
     }
 
     const MOVIE_PORTRAITS = {
-      mywa: {
-        primary: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=480&q=85',
-        fallback: makeMoviePortraitSvg({ blonde: true, robeColor: '#7f1d1d', accentColor: '#fbbf24', bg1: '#450a0a', bg2: '#09090b', isFemale: true })
-      },
-      draco: {
-        primary: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Tom_Felton_by_Gage_Skidmore.jpg/440px-Tom_Felton_by_Gage_Skidmore.jpg',
-        fallback: makeMoviePortraitSvg({ blonde: true, robeColor: '#14532d', accentColor: '#94a3b8', bg1: '#14532d', bg2: '#052e16' })
-      },
-      tom: {
-        primary: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Christian_Coulson_2012.jpg/440px-Christian_Coulson_2012.jpg',
-        fallback: makeMoviePortraitSvg({ hairColor: '#09090b', robeColor: '#18181b', accentColor: '#15803d', bg1: '#1e293b', bg2: '#09090b' })
-      },
-      mattheo: {
-        primary: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Hero_Fiennes-Tiffin_by_Gage_Skidmore.jpg/440px-Hero_Fiennes-Tiffin_by_Gage_Skidmore.jpg',
-        fallback: makeMoviePortraitSvg({ hairColor: '#1c1917', robeColor: '#18181b', accentColor: '#166534', bg1: '#27272a', bg2: '#09090b' })
-      },
-      severus: {
-        primary: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Alan_Rickman_after_Seminar_%283%29.jpg/440px-Alan_Rickman_after_Seminar_%283%29.jpg',
-        fallback: makeMoviePortraitSvg({ hairColor: '#09090b', robeColor: '#09090b', accentColor: '#14532d', bg1: '#18181b', bg2: '#000000' })
-      },
-      narcissa: {
-        primary: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Helen_McCrory_%2829524833273%29.jpg/440px-Helen_McCrory_%2829524833273%29.jpg',
-        fallback: makeMoviePortraitSvg({ blonde: true, robeColor: '#18181b', accentColor: '#94a3b8', bg1: '#1e1b4b', bg2: '#09090b', isFemale: true })
-      },
-      pansy: {
-        primary: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Scarlett_Byrne_by_Gage_Skidmore.jpg/440px-Scarlett_Byrne_by_Gage_Skidmore.jpg',
-        fallback: makeMoviePortraitSvg({ hairColor: '#09090b', robeColor: '#14532d', accentColor: '#cbd5e1', bg1: '#31102f', bg2: '#09090b', isFemale: true })
-      },
-      blaise: {
-        primary: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Louis_Cordice.jpg/440px-Louis_Cordice.jpg',
-        fallback: makeMoviePortraitSvg({ hairColor: '#09090b', skinColor: '#8d5524', robeColor: '#14532d', accentColor: '#e2e8f0', bg1: '#18181b', bg2: '#09090b' })
-      },
-      theodore: {
-        primary: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=480&q=85',
-        fallback: makeMoviePortraitSvg({ hairColor: '#1e1b4b', robeColor: '#0f172a', accentColor: '#15803d', bg1: '#1e293b', bg2: '#020617' })
-      },
-      lorenzo: {
-        primary: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=480&q=85',
-        fallback: makeMoviePortraitSvg({ hairColor: '#451a03', robeColor: '#14532d', accentColor: '#cbd5e1', bg1: '#3f2e21', bg2: '#09090b' })
-      },
-      harry: {
-        primary: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Daniel_Radcliffe_SDCC_2014.jpg/440px-Daniel_Radcliffe_SDCC_2014.jpg',
-        fallback: makeMoviePortraitSvg({ hairColor: '#09090b', robeColor: '#7f1d1d', accentColor: '#eab308', bg1: '#450a0a', bg2: '#09090b', glasses: true, scar: true })
-      },
-      hermione: {
-        primary: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Emma_Watson_2013.jpg/440px-Emma_Watson_2013.jpg',
-        fallback: makeMoviePortraitSvg({ hairColor: '#451a03', robeColor: '#7f1d1d', accentColor: '#eab308', bg1: '#451a03', bg2: '#09090b', isFemale: true })
-      },
-      ron: {
-        primary: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/RupertGrint2018.jpg/440px-RupertGrint2018.jpg',
-        fallback: makeMoviePortraitSvg({ hairColor: '#c2410c', robeColor: '#7f1d1d', accentColor: '#facc15', bg1: '#7c2d12', bg2: '#09090b' })
-      },
-      ginny: {
-        primary: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Bonnie_Wright_by_Gage_Skidmore.jpg/440px-Bonnie_Wright_by_Gage_Skidmore.jpg',
-        fallback: makeMoviePortraitSvg({ hairColor: '#b91c1c', robeColor: '#7f1d1d', accentColor: '#facc15', bg1: '#450a0a', bg2: '#09090b', isFemale: true })
-      },
-      astoria: {
-        primary: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Jade_Gordon_2011.jpg/440px-Jade_Gordon_2011.jpg',
-        fallback: makeMoviePortraitSvg({ hairColor: '#3f2e21', robeColor: '#14532d', accentColor: '#e2e8f0', bg1: '#1e1b4b', bg2: '#09090b', isFemale: true })
-      },
-      oliver: {
-        primary: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Sean_Biggerstaff.jpg/440px-Sean_Biggerstaff.jpg',
-        fallback: makeMoviePortraitSvg({ hairColor: '#292524', robeColor: '#7f1d1d', accentColor: '#eab308', bg1: '#450a0a', bg2: '#09090b' })
-      },
-      cedric: {
-        primary: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Robert_Pattinson_Premiere_of_The_Lost_City_of_Z_at_Zoo_Palast_Berlinale_2017_02.jpg/440px-Robert_Pattinson_Premiere_of_The_Lost_City_of_Z_at_Zoo_Palast_Berlinale_2017_02.jpg',
-        fallback: makeMoviePortraitSvg({ hairColor: '#44403c', robeColor: '#ca8a04', accentColor: '#18181b', bg1: '#422006', bg2: '#09090b' })
-      }
+      mywa: { primary: 'assets/mywa.jpg', fallback: makeMoviePortraitSvg({ hairColor: '#292524', robeColor: '#7f1d1d', accentColor: '#fbbf24', bg1: '#450a0a', bg2: '#09090b', isFemale: true }) },
+      draco: { primary: 'assets/draco.jpg', fallback: makeMoviePortraitSvg({ blonde: true, robeColor: '#14532d', accentColor: '#94a3b8', bg1: '#14532d', bg2: '#052e16' }) },
+      tom: { primary: 'assets/tom.jpg', fallback: makeMoviePortraitSvg({ hairColor: '#09090b', robeColor: '#18181b', accentColor: '#15803d', bg1: '#1e293b', bg2: '#09090b' }) },
+      mattheo: { primary: 'assets/mattheo.jpg', fallback: makeMoviePortraitSvg({ hairColor: '#1c1917', robeColor: '#18181b', accentColor: '#166534', bg1: '#27272a', bg2: '#09090b' }) },
+      severus: { primary: 'assets/severus.jpg', fallback: makeMoviePortraitSvg({ hairColor: '#09090b', robeColor: '#09090b', accentColor: '#14532d', bg1: '#18181b', bg2: '#000000' }) },
+      narcissa: { primary: 'assets/narcissa.jpg', fallback: makeMoviePortraitSvg({ blonde: true, robeColor: '#18181b', accentColor: '#94a3b8', bg1: '#1e1b4b', bg2: '#09090b', isFemale: true }) },
+      pansy: { primary: 'assets/pansy.jpg', fallback: makeMoviePortraitSvg({ hairColor: '#09090b', robeColor: '#14532d', accentColor: '#cbd5e1', bg1: '#31102f', bg2: '#09090b', isFemale: true }) },
+      blaise: { primary: 'assets/blaise.jpg', fallback: makeMoviePortraitSvg({ hairColor: '#09090b', skinColor: '#8d5524', robeColor: '#14532d', accentColor: '#e2e8f0', bg1: '#18181b', bg2: '#09090b' }) },
+      theodore: { primary: 'assets/theodore.jpg', fallback: makeMoviePortraitSvg({ hairColor: '#1e1b4b', robeColor: '#0f172a', accentColor: '#15803d', bg1: '#1e293b', bg2: '#020617' }) },
+      lorenzo: { primary: 'assets/lorenzo.jpg', fallback: makeMoviePortraitSvg({ hairColor: '#451a03', robeColor: '#14532d', accentColor: '#cbd5e1', bg1: '#3f2e21', bg2: '#09090b' }) },
+      harry: { primary: 'assets/harry.jpg', fallback: makeMoviePortraitSvg({ hairColor: '#09090b', robeColor: '#7f1d1d', accentColor: '#eab308', bg1: '#450a0a', bg2: '#09090b', glasses: true, scar: true }) },
+      hermione: { primary: 'assets/hermione.jpg', fallback: makeMoviePortraitSvg({ hairColor: '#451a03', robeColor: '#7f1d1d', accentColor: '#eab308', bg1: '#451a03', bg2: '#09090b', isFemale: true }) },
+      ron: { primary: 'assets/ron.jpg', fallback: makeMoviePortraitSvg({ hairColor: '#c2410c', robeColor: '#7f1d1d', accentColor: '#facc15', bg1: '#7c2d12', bg2: '#09090b' }) },
+      ginny: { primary: 'assets/ginny.jpg', fallback: makeMoviePortraitSvg({ hairColor: '#b91c1c', robeColor: '#7f1d1d', accentColor: '#facc15', bg1: '#450a0a', bg2: '#09090b', isFemale: true }) },
+      astoria: { primary: 'assets/astoria.jpg', fallback: makeMoviePortraitSvg({ hairColor: '#3f2e21', robeColor: '#14532d', accentColor: '#e2e8f0', bg1: '#1e1b4b', bg2: '#09090b', isFemale: true }) },
+      oliver: { primary: 'assets/oliver.jpg', fallback: makeMoviePortraitSvg({ hairColor: '#292524', robeColor: '#7f1d1d', accentColor: '#eab308', bg1: '#450a0a', bg2: '#09090b' }) },
+      cedric: { primary: 'assets/cedric.jpg', fallback: makeMoviePortraitSvg({ hairColor: '#44403c', robeColor: '#ca8a04', accentColor: '#18181b', bg1: '#422006', bg2: '#09090b' }) }
     };
 
     const BANNER_PHOTOS = {
@@ -830,7 +837,7 @@
     };
 
     /*************************************************************************
-     * 4. PROGRESSION ENGINE (ALL STATS START AT 0.0% + GREEN STATUS TOAST)
+     * 4. PROGRESSION ENGINE
      *************************************************************************/
     function deriveRelationshipTier(pct) {
       if (pct <= -50) return { title: 'Sworn Enemies', insight: 'Pure hostility and cold glares across the Great Hall.' };
@@ -939,7 +946,7 @@
     }
 
     /*************************************************************************
-     * 5. DEFAULT HOGWARTS UNIVERSE STATE
+     * 5. DEFAULT HOGWARTS UNIVERSE WITH DISTINCT VOICE STYLES
      *************************************************************************/
     const NPC_ACCOUNTS = [
       { name: 'pureblood_pride', handle: '@pureblood_pride', verified: false, avatar: makePortraitFallback('PP', '#991B1B', '#18181B') },
@@ -959,6 +966,7 @@
       return {
         userEmail: '',
         userId: '',
+        geminiApiKey: '',
         activeUniverseId: 'hogwarts_universe',
         activeTab: 'home',
         profileSubTab: 'overview',
@@ -996,7 +1004,9 @@
                 followers: '900.0M',
                 bio: 'Slytherin prefect. Seeker. Pure-blood wizard. Malfoy heir.',
                 thoughtQuote: 'The digital tension is unbearable. Now that she’s online...',
-                personality: 'Aristocratic, sharp British wit, prideful at 0.0% chemistry, intensely possessive and devoted as chemistry rises.',
+                personality: 'Aristocratic, sharp British wit, prideful tsundere at low chemistry, intensely possessive and devoted as chemistry rises. Speaks in crisp aristocratic UK English without modern slang.',
+                mood: '😏 Smirking',
+                streak: 1,
                 chemistry: 0.0,
                 delta: '0.0%',
                 unreadCount: 2,
@@ -1025,7 +1035,9 @@
                 followers: '812.4M',
                 bio: 'Head Boy. Ambition requires neither permission nor apology.',
                 thoughtQuote: 'Curious how effortlessly she commands attention without trying.',
-                personality: 'Calculated, eloquent British tone, magnetic, observes everything quietly.',
+                personality: 'Calculated, eloquent formal British English, magnetic, psychological mind games, never uses emojis or slang.',
+                mood: '♟️ Calculating',
+                streak: 1,
                 chemistry: 0.0,
                 delta: '0.0%',
                 unreadCount: 1,
@@ -1052,7 +1064,9 @@
                 followers: '640.2M',
                 bio: 'Chaos in a tailored blazer. Touch her and see what happens.',
                 thoughtQuote: 'Draco thinks he has a chance. Hilarious.',
-                personality: 'Rebellious, darkly charming, teasing, fiercely protective.',
+                personality: 'Rebellious, darkly charming, teasing, fiercely protective, mixes UK banter with casual Malay slang.',
+                mood: '🔥 Provoking',
+                streak: 1,
                 chemistry: 0.0,
                 delta: '0.0%',
                 unreadCount: 1,
@@ -1079,7 +1093,9 @@
                 followers: '490.0M',
                 bio: 'Potions Master. Head of Slytherin House. Silence is a virtue.',
                 thoughtQuote: 'Another Potter causing commotion on the timeline.',
-                personality: 'Dry, deadpan, strict, secretly observant.',
+                personality: 'Dry, deadpan, strict formal British English, zero emojis, secretly observant.',
+                mood: '🖤 Unimpressed',
+                streak: 1,
                 chemistry: 0.0,
                 delta: '0.0%',
                 unreadCount: 1,
@@ -1106,7 +1122,9 @@
                 followers: '460.9M',
                 bio: 'Slytherin fashion authority & tea distributor 💅',
                 thoughtQuote: 'She actually has taste. Finally someone tolerable.',
-                personality: 'Sharp-tongued, glamorous, loves gossip and drama.',
+                personality: 'Sharp-tongued, glamorous, loves gossip, tea, and fashion.',
+                mood: '💅 Spilling Tea',
+                streak: 1,
                 chemistry: 0.0,
                 delta: '0.0%',
                 unreadCount: 1,
@@ -1133,7 +1151,9 @@
                 followers: '420.8M',
                 bio: 'Slytherin’s finest aesthetic & chaos instigator 🍷✨',
                 thoughtQuote: 'This comment section is pure cinema.',
-                personality: 'Playful, dramatic, supportive, loves roasting Draco and Pansy.',
+                personality: 'Playful, dramatic, best-friend energy, uses UK + Gen Z Malay slang naturally, loves roasting Draco and Pansy.',
+                mood: '😂 Chaotic',
+                streak: 1,
                 chemistry: 0.0,
                 delta: '0.0%',
                 unreadCount: 1,
@@ -1160,7 +1180,9 @@
                 followers: '389.1M',
                 bio: 'Observing the madness from the corner armchair.',
                 thoughtQuote: 'At least she makes the timeline entertaining.',
-                personality: 'Dry British sarcasm, deadpan humor, loyal once chemistry rises.',
+                personality: 'Dry British sarcasm, deadpan lowercase replies, loyal once chemistry rises.',
+                mood: '📖 Unbothered',
+                streak: 1,
                 chemistry: 0.0,
                 delta: '0.0%',
                 unreadCount: 1,
@@ -1188,6 +1210,8 @@
                 bio: 'Unbothered. Tailored. Watching you all embarrass yourselves.',
                 thoughtQuote: 'Careful with the rich comment, Draco.',
                 personality: 'Smooth, perceptive, stylish, observant.',
+                mood: '🍷 Unbothered',
+                streak: 1,
                 chemistry: 0.0,
                 delta: '0.0%',
                 unreadCount: 1,
@@ -1206,60 +1230,6 @@
                 ]
               },
               {
-                id: 'narcissa',
-                name: 'Narcissa Malfoy',
-                handle: '@NarcissaMalfoy',
-                verified: true,
-                house: 'Slytherin',
-                followers: '520.0M',
-                bio: 'Lady of Malfoy Manor. Grace above all.',
-                thoughtQuote: 'Poise is never accidental.',
-                personality: 'Regal, observant, strategic, protective of family legacy.',
-                chemistry: 0.0,
-                delta: '0.0%',
-                unreadCount: 1,
-                customRelLabel: false,
-                relTitle: 'Stranger • 0.0%',
-                relInsight: 'Fresh start — earn the Malfoy matriarch’s approval.',
-                avatar: MOVIE_PORTRAITS.narcissa.primary,
-                defaultMovieAvatar: MOVIE_PORTRAITS.narcissa.primary,
-                fallbackAvatar: MOVIE_PORTRAITS.narcissa.fallback,
-                banner: BANNER_PHOTOS.castle,
-                stories: [
-                  { id: 'ns1', text: 'Poise is never accidental, Mywa.', image: BANNER_PHOTOS.castle, time: nowStamp }
-                ],
-                messages: [
-                  { sender: 'ai', text: 'Do not simply tolerate it, Mywa; orchestrate it. The Manor is a stage.', time: chatTime, exactTime: exactClock }
-                ]
-              },
-              {
-                id: 'astoria',
-                name: 'Astoria Greengrass',
-                handle: '@AstoriaGreengrass',
-                verified: true,
-                house: 'Slytherin',
-                followers: '312.0M',
-                bio: 'Refinement is only power if it is recognized by those who actually matter.',
-                thoughtQuote: 'Courtesy is the most effective way to hide a grudge.',
-                personality: 'Polished, observant, competitive.',
-                chemistry: 0.0,
-                delta: '0.0%',
-                unreadCount: 1,
-                customRelLabel: false,
-                relTitle: 'Stranger • 0.0%',
-                relInsight: 'Fresh start — friend or rival, your choice.',
-                avatar: MOVIE_PORTRAITS.astoria.primary,
-                defaultMovieAvatar: MOVIE_PORTRAITS.astoria.primary,
-                fallbackAvatar: MOVIE_PORTRAITS.astoria.fallback,
-                banner: BANNER_PHOTOS.dungeons,
-                stories: [
-                  { id: 'as1', text: 'Some believe courtesy is a weakness.', image: null, time: nowStamp }
-                ],
-                messages: [
-                  { sender: 'ai', text: 'hello there. new around the dungeons?', time: chatTime, exactTime: exactClock }
-                ]
-              },
-              {
                 id: 'harry',
                 name: 'Harry Potter',
                 handle: '@Potter',
@@ -1268,7 +1238,9 @@
                 followers: '780.0M',
                 bio: 'The Boy Who Lived • Gryffindor Seeker ⚡',
                 thoughtQuote: 'Keeping an eye on the Slytherins around her.',
-                personality: 'Protective, loyal, impulsive, cares deeply.',
+                personality: 'Protective older-brother energy, loyal, impulsive, cares deeply.',
+                mood: '⚡ Protective',
+                streak: 1,
                 chemistry: 0.0,
                 delta: '0.0%',
                 unreadCount: 1,
@@ -1296,6 +1268,8 @@
                 bio: 'Brightest witch of our age 📚 • Read Hogwarts: A History.',
                 thoughtQuote: 'NEWTs are in three months and they are still arguing online.',
                 personality: 'Intelligent, caring, organised, sharp wit.',
+                mood: '📚 Studying',
+                streak: 1,
                 chemistry: 0.0,
                 delta: '0.0%',
                 unreadCount: 1,
@@ -1322,7 +1296,9 @@
                 followers: '430.0M',
                 bio: 'Gryffindor Keeper • Chess strategist ♟️',
                 thoughtQuote: 'Bloody hell, the timeline is wild today.',
-                personality: 'Loyal, funny, protective, expressive.',
+                personality: 'Loyal, funny, protective, expressive British banter.',
+                mood: '🍗 Hungry',
+                streak: 1,
                 chemistry: 0.0,
                 delta: '0.0%',
                 unreadCount: 1,
@@ -1350,6 +1326,8 @@
                 bio: 'Chaser • Bat-Bogey Hex queen 🦇',
                 thoughtQuote: 'Love her energy already.',
                 personality: 'Fierce, bold, loyal, zero patience for fake people.',
+                mood: '🦇 Hyped',
+                streak: 1,
                 chemistry: 0.0,
                 delta: '0.0%',
                 unreadCount: 1,
@@ -1365,60 +1343,6 @@
                 ],
                 messages: [
                   { sender: 'ai', text: 'hey babe, love your vibe already—let’s hang out soon!', time: chatTime, exactTime: exactClock }
-                ]
-              },
-              {
-                id: 'oliver',
-                name: 'Oliver Wood',
-                handle: '@CaptainOliverWood',
-                verified: true,
-                house: 'Gryffindor',
-                followers: '285.4M',
-                bio: 'Gryffindor Quidditch Captain • Sleep is optional, the Cup is forever.',
-                thoughtQuote: 'One more lap.',
-                personality: 'Intense Quidditch fanatic, disciplined.',
-                chemistry: 0.0,
-                delta: '0.0%',
-                unreadCount: 1,
-                customRelLabel: false,
-                relTitle: 'Stranger • 0.0%',
-                relInsight: 'Fresh start — show up for Quidditch drills.',
-                avatar: MOVIE_PORTRAITS.oliver.primary,
-                defaultMovieAvatar: MOVIE_PORTRAITS.oliver.primary,
-                fallbackAvatar: MOVIE_PORTRAITS.oliver.fallback,
-                banner: BANNER_PHOTOS.castle,
-                stories: [
-                  { id: 'os1', text: '6 AM practice tomorrow. Rain or shine.', image: null, time: nowStamp }
-                ],
-                messages: [
-                  { sender: 'ai', text: 'trying out for the squad this term? pitch is open at dawn.', time: chatTime, exactTime: exactClock }
-                ]
-              },
-              {
-                id: 'cedric',
-                name: 'Cedric Diggory',
-                handle: '@CedricDiggory',
-                verified: true,
-                house: 'Hufflepuff',
-                followers: '590.3M',
-                bio: 'Hufflepuff Prefect & Seeker • Fair play always 💛🖤',
-                thoughtQuote: 'Always happy to help around the castle.',
-                personality: 'Warm, gentlemanly, charming.',
-                chemistry: 0.0,
-                delta: '0.0%',
-                unreadCount: 1,
-                customRelLabel: false,
-                relTitle: 'Stranger • 0.0%',
-                relInsight: 'Fresh start — chat to grow your bond.',
-                avatar: MOVIE_PORTRAITS.cedric.primary,
-                defaultMovieAvatar: MOVIE_PORTRAITS.cedric.primary,
-                fallbackAvatar: MOVIE_PORTRAITS.cedric.fallback,
-                banner: BANNER_PHOTOS.castle,
-                stories: [
-                  { id: 'cs1', text: 'Great match today everyone!', image: null, time: nowStamp }
-                ],
-                messages: [
-                  { sender: 'ai', text: 'hey there, let me know if you need help finding any classrooms.', time: chatTime, exactTime: exactClock }
                 ]
               }
             ],
@@ -1436,39 +1360,10 @@
                   { id: 'tc1', authorId: 'npc', authorName: 'pureblood_pride', handle: '@pureblood_pride', verified: false, avatar: NPC_ACCOUNTS[0].avatar, likes: 1100, text: 'sounds like a manifesto for a secret society. very ominous.' },
                   { id: 'tc2', authorId: 'tom', authorName: 'Tom Riddle', handle: '@TomRiddle', verified: true, avatar: MOVIE_PORTRAITS.tom.primary, fallbackAvatar: MOVIE_PORTRAITS.tom.fallback, likes: 12800000, text: '@pureblood_pride It is not a manifesto. It is simply an observation of how the world actually functions.' },
                   { id: 'tc3', authorId: 'theodore', authorName: 'Theodore Nott', handle: '@theodorenott', verified: true, avatar: MOVIE_PORTRAITS.theodore.primary, fallbackAvatar: MOVIE_PORTRAITS.theodore.fallback, likes: 13300000, text: 'who is he trying to impress with the deep poetry now' },
-                  { id: 'tc4', authorId: 'npc', authorName: 'snake_pit_diaries', handle: '@snake_pit_diaries', verified: false, avatar: NPC_ACCOUNTS[1].avatar, likes: 225, text: '@theodorenott the sheer audacity of this man pretending he isn’t just describing his own ego' },
                   { id: 'tc5', authorId: 'pansy', authorName: 'Pansy Parkinson', handle: '@Pansy', verified: true, avatar: MOVIE_PORTRAITS.pansy.primary, fallbackAvatar: MOVIE_PORTRAITS.pansy.fallback, likes: 433500, text: 'perfection is best served in the shadows. couldn’t have said it better' },
                   { id: 'tc6', authorId: 'draco', authorName: 'Draco Malfoy', handle: '@DracoMalfoy', verified: true, avatar: MOVIE_PORTRAITS.draco.primary, fallbackAvatar: MOVIE_PORTRAITS.draco.fallback, likes: 115000, text: 'imagine spending this much time thinking about perception when you could just be rich.' },
                   { id: 'tc7', authorId: 'blaise', authorName: 'Blaise Zabini', handle: '@ZaBini', verified: true, avatar: MOVIE_PORTRAITS.blaise.primary, fallbackAvatar: MOVIE_PORTRAITS.blaise.fallback, likes: 55000000, text: '@DracoMalfoy Careful with the rich comment. Some of us appreciate the aesthetic of a well-worded threat.' },
-                  { id: 'tc8', authorId: 'astoria', authorName: 'Astoria Greengrass', handle: '@AstoriaGreengrass', verified: true, avatar: MOVIE_PORTRAITS.astoria.primary, fallbackAvatar: MOVIE_PORTRAITS.astoria.fallback, likes: 814700, text: 'Refinement is only power if it is recognized by those who actually matter. Otherwise it is just noise.' },
                   { id: 'tc9', authorId: 'lorenzo', authorName: 'Lorenzo Berkshire', handle: '@LorenzoBerkshire', verified: true, avatar: MOVIE_PORTRAITS.lorenzo.primary, fallbackAvatar: MOVIE_PORTRAITS.lorenzo.fallback, likes: 184100, text: '@Pansy stop enabling him before he decides we all need to move into the shadows for the weekend' }
-                ]
-              },
-              {
-                id: 'post_wood_1',
-                authorId: 'oliver',
-                text: 'One more lap. If the seekers can’t handle the endurance work, they have no business chasing the snitch.',
-                time: nowStamp,
-                views: '100.3K',
-                reposts: '895',
-                likes: 9840,
-                liked: false,
-                comments: [
-                  { id: 'wc1', authorId: 'draco', authorName: 'Draco Malfoy', handle: '@DracoMalfoy', verified: true, avatar: MOVIE_PORTRAITS.draco.primary, fallbackAvatar: MOVIE_PORTRAITS.draco.fallback, likes: 8420, text: 'wood is actually hallucinating at this point. let the seekers breathe or they’ll just fall off their brooms' },
-                  { id: 'wc2', authorId: 'theodore', authorName: 'Theodore Nott', handle: '@theodorenott', verified: true, avatar: MOVIE_PORTRAITS.theodore.primary, fallbackAvatar: MOVIE_PORTRAITS.theodore.fallback, likes: 3910, text: 'the man treats quidditch like a holy war' }
-                ]
-              },
-              {
-                id: 'post_astoria_1',
-                authorId: 'astoria',
-                text: 'Some believe that courtesy is a weakness, while others realize it is the most effective way to hide a grudge.',
-                time: nowStamp,
-                views: '410.2K',
-                reposts: '2.9K',
-                likes: 166700,
-                liked: false,
-                comments: [
-                  { id: 'ac1', authorId: 'pansy', authorName: 'Pansy Parkinson', handle: '@Pansy', verified: true, avatar: MOVIE_PORTRAITS.pansy.primary, fallbackAvatar: MOVIE_PORTRAITS.pansy.fallback, likes: 44200, text: 'subtweeting in lowercase would hit harder, darling.' }
                 ]
               },
               {
@@ -1512,11 +1407,11 @@
       return 'user_' + Math.abs(hash).toString(36) + '_' + clean.replace(/[^a-z0-9]/g, '_');
     }
 
-    function completeUserLogin(email) {
+    function completeUserLogin(email, providedKey = '') {
       const cleanEmail = (email || '').trim().toLowerCase();
       const uid = emailToUid(cleanEmail);
 
-      const savedRaw = safeStorage.get(`statusverse_v4_${uid}`);
+      const savedRaw = safeStorage.get(`statusverse_v5_${uid}`);
       if (savedRaw) {
         try {
           const parsed = JSON.parse(savedRaw);
@@ -1530,6 +1425,7 @@
 
       appState.userEmail = cleanEmail;
       appState.userId = uid;
+      if (providedKey) appState.geminiApiKey = providedKey.trim();
       safeStorage.set('statusverse_last_email', cleanEmail);
       saveState();
 
@@ -1550,7 +1446,7 @@
 
     function saveState() {
       if (appState && appState.userId) {
-        safeStorage.set(`statusverse_v4_${appState.userId}`, JSON.stringify(appState));
+        safeStorage.set(`statusverse_v5_${appState.userId}`, JSON.stringify(appState));
       }
     }
 
@@ -1563,7 +1459,7 @@
     }
 
     /*************************************************************************
-     * 6. EMAIL LOGIN BUTTON HANDLERS
+     * 6. EMAIL LOGIN & API KEY MODAL HANDLERS
      *************************************************************************/
     function setAuthMode(mode) {
       const loginTab = document.getElementById('auth-tab-login');
@@ -1582,6 +1478,7 @@
 
     function submitEmailLogin() {
       const emailInput = document.getElementById('auth-email');
+      const keyInput = document.getElementById('auth-apikey');
       const errEl = document.getElementById('auth-error-msg');
       const email = (emailInput.value || '').trim();
 
@@ -1592,11 +1489,34 @@
         return;
       }
       errEl.classList.add('hidden');
-      completeUserLogin(email);
+      completeUserLogin(email, keyInput ? keyInput.value : '');
     }
 
-    function submitEmailWithoutPassword() {
-      submitEmailLogin();
+    function instantPreviewLaunch() {
+      const emailInput = document.getElementById('auth-email');
+      const keyInput = document.getElementById('auth-apikey');
+      const email = (emailInput?.value || '').trim() || 'mywa@hogwarts.edu';
+      completeUserLogin(email, keyInput ? keyInput.value : '');
+    }
+
+    function openApiKeyModal() {
+      document.getElementById('modal-apikey-input').value = appState.geminiApiKey || '';
+      const m = document.getElementById('apikey-modal');
+      m.classList.remove('hidden');
+      m.classList.add('flex');
+    }
+
+    function closeApiKeyModal() {
+      const m = document.getElementById('apikey-modal');
+      m.classList.add('hidden');
+      m.classList.remove('flex');
+    }
+
+    function saveApiKeyFromModal() {
+      appState.geminiApiKey = document.getElementById('modal-apikey-input').value.trim();
+      saveState();
+      closeApiKeyModal();
+      showToast(appState.geminiApiKey ? 'Gemini AI Key saved!' : 'Switched to Offline Preview Mode', '🔑');
     }
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -1608,12 +1528,13 @@
     });
 
     /*************************************************************************
-     * 7. GEMINI AI ENGINE
+     * 7. GEMINI AI ENGINE (WITH SMART CONTEXTUAL OFFLINE FALLBACK)
      *************************************************************************/
-    const apiKey = "";
-
     async function callGeminiAPI({ prompt, systemInstruction = "", responseSchema = null }) {
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+      const activeKey = (appState && appState.geminiApiKey) ? appState.geminiApiKey.trim() : "";
+      if (!activeKey) throw new Error('NO_API_KEY');
+
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${activeKey}`;
       const lang = getActiveLanguageObj();
       const fullSystemInstruction = `${systemInstruction}\n\nMANDATORY LANGUAGE RULE: ${lang.instruction}`;
 
@@ -1629,7 +1550,7 @@
         };
       }
 
-      const delays = [800, 1600];
+      const delays = [600, 1400];
       for (let attempt = 0; attempt <= delays.length; attempt++) {
         try {
           const response = await fetch(apiUrl, {
@@ -1647,6 +1568,31 @@
           await new Promise(r => setTimeout(r, delays[attempt]));
         }
       }
+    }
+
+    function generateSmartFallbackReply(char, userText) {
+      const clean = (userText || '').trim();
+      const lower = clean.toLowerCase();
+      const past = (char.messages || []).filter(m => m.sender === 'ai').map(m => m.text);
+      const pickFresh = (arr) => arr.find(line => !past.includes(line)) || arr[Math.floor(Math.random() * arr.length)];
+
+      if (char.id === 'draco') {
+        if (lower.includes('?')) return pickFresh([`why are you asking me that, potter? figure it out yourself.`, `careful with the questions. you might not like my honest answer.`]);
+        return pickFresh([`bold words for someone standing in my corridor, potter.`, `keep talking like that and see how quickly I wipe that smirk off your face.`]);
+      }
+      if (char.id === 'lorenzo') {
+        return pickFresh([`wei sumpah kelakar gila kau ni 😂 draco mesti tengah panas baca ni`, `oi janganlah expose sangat kat sini, mati aku nanti 😂`]);
+      }
+      if (char.id === 'mattheo') {
+        return pickFresh([`careful, princess. keep provoking me and I might actually take you up on that.`, `draco wishes he had half your nerve.`]);
+      }
+      if (char.id === 'tom') {
+        return pickFresh([`Interesting. Most people hesitate before speaking to me with such candour.`, `You play a dangerous game, Mywa. Continue.`]);
+      }
+      if (char.id === 'severus') {
+        return pickFresh([`Spare me the dramatics, Miss Potter.`, `Your lack of subtlety remains astounding.`]);
+      }
+      return pickFresh([`honestly? you always know how to start chaos around here.`, `wait—tell me everything, don’t leave out a single detail.`]);
     }
 
     /*************************************************************************
@@ -1891,8 +1837,24 @@
         renderHomeTab(document.getElementById('main-content'));
         await generateCascadingCommentSection(newPostId, eventPost.text, author.id);
       } catch (e) {
-        showToast('Event triggered!', '🎭');
+        const uni = getActiveUniverse();
+        const author = uni.characters[Math.floor(Math.random() * 4)];
+        const newPostId = 'ev_' + Date.now();
+        const text = `Someone tell ${uni.userPersona.handle} that walking past the Slytherin table like she owns the castle is getting old.`;
+        uni.posts.unshift({
+          id: newPostId,
+          authorId: author.id,
+          text,
+          time: getLiveFormattedTime().stamp,
+          views: '84.1K',
+          reposts: '2.9K',
+          likes: 9400,
+          liked: false,
+          comments: []
+        });
+        saveState();
         renderHomeTab(document.getElementById('main-content'));
+        await generateCascadingCommentSection(newPostId, text, author.id);
       }
     }
 
@@ -1944,6 +1906,14 @@
       overlay.classList.remove('flex');
       activeThreadPostId = null;
       if (appState.activeTab === 'home') renderHomeTab(document.getElementById('main-content'));
+    }
+
+    async function sparkThreadDrama() {
+      if (!activeThreadPostId) return;
+      const uni = getActiveUniverse();
+      const post = uni.posts.find(p => p.id === activeThreadPostId);
+      if (!post) return;
+      await generateCascadingCommentSection(post.id, post.text, null, '🔥 Chaotic');
     }
 
     function replyToSpecificComment(handle, charId, authorName) {
@@ -2145,7 +2115,7 @@ ${npcSummary}
 Recent thread context:
 ${recentComments}
 
-Generate 4 to 6 cascading social media comments reacting directly to ${uni.userPersona.handle} AND tagging each other!`,
+Generate 4 to 6 cascading social media comments reacting directly to "${triggerText}" AND tagging/arguing with each other in distinct character voices!`,
           systemInstruction: "Simulate a viral Status/Twitter comment thread where multiple Hogwarts characters and student NPCs reply to @notmywa and roast/banter with each other.",
           responseSchema: schema
         });
@@ -2190,8 +2160,21 @@ Generate 4 to 6 cascading social media comments reacting directly to ${uni.userP
           if (appState.activeTab === 'home') renderHomeTab(document.getElementById('main-content'));
         }
       } catch (err) {
-        const fallbackRepliers = uni.characters.slice(0, 3);
-        fallbackRepliers.forEach((ch, idx) => {
+        const pool = [
+          uni.characters.find(c => c.id === 'draco'),
+          uni.characters.find(c => c.id === 'lorenzo'),
+          uni.characters.find(c => c.id === 'pansy'),
+          uni.characters.find(c => c.id === 'mattheo')
+        ].filter(Boolean);
+
+        const lines = [
+          `${uni.userPersona.handle} bold of you to post that where the entire castle can read it.`,
+          `@DracoMalfoy wei relaks lah, dia cakap benda betul kot 😂`,
+          `@LorenzoBerkshire nobody asked for your commentary, berkshire.`,
+          `@DracoMalfoy leave her alone malfoy, unless you’re jealous.`
+        ];
+
+        pool.forEach((ch, idx) => {
           post.comments.push({
             id: 'fbcmt_' + Date.now() + '_' + idx,
             authorId: ch.id,
@@ -2200,10 +2183,8 @@ Generate 4 to 6 cascading social media comments reacting directly to ${uni.userP
             verified: true,
             avatar: ch.avatar,
             fallbackAvatar: ch.fallbackAvatar,
-            likes: 14200,
-            text: idx === 0
-              ? `${uni.userPersona.handle} bold of you to say that in front of the entire castle.`
-              : `@${fallbackRepliers[0].handle.replace('@', '')} let her speak, it’s honestly entertaining.`
+            likes: 14200 + idx * 3100,
+            text: lines[idx] || `${uni.userPersona.handle} iconic honestly.`
           });
         });
         saveState();
@@ -2283,7 +2264,7 @@ Generate 4 to 6 cascading social media comments reacting directly to ${uni.userP
               <h2 class="text-lg font-display font-bold text-white">${escapeHtml(char.name)}</h2>
               ${renderVerifiedBadge()}
             </div>
-            <p class="text-xs text-zinc-500">${escapeHtml(char.handle)}</p>
+            <p class="text-xs text-zinc-500">${escapeHtml(char.handle)} • <span class="text-[#b85d79] font-semibold">${escapeHtml(char.mood || '😏 Active')}</span></p>
             <p class="text-xs text-zinc-200 mt-2 leading-relaxed">${escapeHtml(char.bio)}</p>
             <p class="text-xs text-zinc-400 mt-2"><strong class="text-white">${escapeHtml(char.followers || '500.0M')}</strong> Followers</p>
           </div>
@@ -2466,7 +2447,7 @@ Generate 4 to 6 cascading social media comments reacting directly to ${uni.userP
       char.avatar = char.defaultMovieAvatar || char.fallbackAvatar;
       document.getElementById('edit-char-avatar-preview').src = char.avatar;
       saveState();
-      showToast('Restored movie portrait!', '🎬');
+      showToast('Restored portrait!', '🎬');
     }
 
     function saveEditCharDetails() {
@@ -2557,6 +2538,14 @@ Generate 4 to 6 cascading social media comments reacting directly to ${uni.userP
       activeStoryCharId = null;
     }
 
+    function reactToStory(emoji) {
+      if (!activeStoryCharId) return;
+      const targetId = activeStoryCharId;
+      closeStoryModal();
+      rewardStatProgress({ charId: targetId, chemDelta: 0.5, auraDelta: 0.2, xp: 30 });
+      openDirectChat(targetId, `Reacted ${emoji} to your story`);
+    }
+
     function handleStoryReply(e) {
       e.preventDefault();
       const input = document.getElementById('story-reply-input');
@@ -2645,7 +2634,7 @@ Generate 4 to 6 cascading social media comments reacting directly to ${uni.userP
     }
 
     /*************************************************************************
-     * 13. MESSAGES INBOX & CLEAN DARK-PLUM iMESSAGE CHAT (WITH TIMESTAMPS)
+     * 13. MESSAGES INBOX & COZY PLUM iMESSAGE + MOCHICHAT ROOM
      *************************************************************************/
     let activeChatMode = null;
     let activeChatCharId = null;
@@ -2661,7 +2650,7 @@ Generate 4 to 6 cascading social media comments reacting directly to ${uni.userP
 
     function startAutoDmEngine() {
       if (autoDmTimer) clearInterval(autoDmTimer);
-      autoDmTimer = setInterval(runAutonomousCharacterDm, 30000);
+      autoDmTimer = setInterval(runAutonomousCharacterDm, 35000);
     }
 
     function stopAutoDmEngine() {
@@ -2672,7 +2661,7 @@ Generate 4 to 6 cascading social media comments reacting directly to ${uni.userP
     }
 
     async function runAutonomousCharacterDm() {
-      if (!appState || !appState.userId) return;
+      if (!appState || !appState.userId || !appState.geminiApiKey) return;
       const uni = getActiveUniverse();
       if (!uni || !uni.characters || uni.characters.length === 0) return;
 
@@ -2778,6 +2767,8 @@ Generate 4 to 6 cascading social media comments reacting directly to ${uni.userP
 
       const firstName = char.name.split(' ')[0];
       document.getElementById('chat-room-title').textContent = firstName;
+      document.getElementById('chat-streak-badge').textContent = `🔥 ${char.streak || 1}d`;
+      document.getElementById('chat-mood-pill').textContent = char.mood || '😏 Smirking';
       document.getElementById('chat-message-input').placeholder = `Message ${firstName}...`;
       toggleChatSendButtonIcon('');
 
@@ -2807,6 +2798,8 @@ Generate 4 to 6 cascading social media comments reacting directly to ${uni.userP
 
       document.getElementById('chat-room-avatar').src = makePortraitFallback(uni.emoji || 'GC', '#b85d79', '#4C1D95');
       document.getElementById('chat-room-title').textContent = uni.groupChat.name;
+      document.getElementById('chat-streak-badge').textContent = `⚡ ${uni.characters.length}`;
+      document.getElementById('chat-mood-pill').textContent = '💬 Group Chaos';
       document.getElementById('chat-message-input').placeholder = `Message ${uni.groupChat.name}...`;
       toggleChatSendButtonIcon('');
 
@@ -2820,9 +2813,30 @@ Generate 4 to 6 cascading social media comments reacting directly to ${uni.userP
       const overlay = document.getElementById('chat-room-overlay');
       overlay.classList.add('hidden');
       overlay.classList.remove('flex');
+      document.getElementById('chat-gift-drawer')?.classList.add('hidden');
       activeChatMode = null;
       activeChatCharId = null;
       if (appState.activeTab === 'messages') renderMessagesTab(document.getElementById('main-content'));
+    }
+
+    function toggleGiftDrawer() {
+      document.getElementById('chat-gift-drawer')?.classList.toggle('hidden');
+    }
+
+    function insertRpChip(chip) {
+      const inp = document.getElementById('chat-message-input');
+      inp.value = chip + inp.value;
+      toggleChatSendButtonIcon(inp.value);
+      inp.focus();
+    }
+
+    function sendChatGift(giftLabel, chemBonus) {
+      toggleGiftDrawer();
+      if (activeChatMode === 'dm' && activeChatCharId) {
+        rewardStatProgress({ charId: activeChatCharId, chemDelta: chemBonus, auraDelta: 0.5, xp: 60 });
+        document.getElementById('chat-message-input').value = `🎁 Sent you ${giftLabel}`;
+        handleSendChatMessage({ preventDefault: () => {} });
+      }
     }
 
     function toggleChatSendButtonIcon(val) {
@@ -2879,14 +2893,15 @@ Generate 4 to 6 cascading social media comments reacting directly to ${uni.userP
         if (!char) return;
 
         let lastHeaderTime = '';
-        list.innerHTML = char.messages.map((m) => {
+        list.innerHTML = char.messages.map((m, idx) => {
           const isMe = m.sender === 'user';
+          const isLastUser = isMe && idx === char.messages.length - 1;
           const showTimeHeader = m.time && m.time !== lastHeaderTime;
           if (showTimeHeader) lastHeaderTime = m.time;
           const clock = extractBubbleClock(m);
 
           return `
-            <div class="space-y-1.5">
+            <div class="space-y-1">
               ${showTimeHeader ? `<div class="text-center text-[11px] text-zinc-500 py-2 font-medium">${escapeHtml(m.time)}</div>` : ''}
               <div class="flex items-end gap-1.5 ${isMe ? 'justify-end' : 'justify-start'}">
                 ${isMe ? `<span class="text-[10px] text-zinc-500 shrink-0 pb-1 select-none">${escapeHtml(clock)}</span>` : ''}
@@ -2896,6 +2911,7 @@ Generate 4 to 6 cascading social media comments reacting directly to ${uni.userP
                 </div>
                 ${!isMe ? `<span class="text-[10px] text-zinc-500 shrink-0 pb-1 select-none">${escapeHtml(clock)}</span>` : ''}
               </div>
+              ${isLastUser ? `<div class="text-right text-[10px] text-zinc-500 pr-1">Read</div>` : ''}
             </div>
           `;
         }).join('');
@@ -2941,6 +2957,8 @@ Generate 4 to 6 cascading social media comments reacting directly to ${uni.userP
         if (!char) return;
 
         char.messages.push({ sender: 'user', text, time: live.chatHeader, exactTime: live.timeStr });
+        char.streak = (char.streak || 1) + 1;
+        document.getElementById('chat-streak-badge').textContent = `🔥 ${char.streak}d`;
         saveState();
         renderChatMessages();
 
@@ -2971,8 +2989,8 @@ Generate 4 to 6 cascading social media comments reacting directly to ${uni.userP
           };
 
           const replies = await callGeminiAPI({
-            prompt: `Universe: ${uni.name}\nUser: ${uni.userPersona.name}\nMembers:\n${castDesc}\nRecent group chat:\n${recentGrp}\nGenerate 2-3 lowercase casual iMessage replies reacting to ${uni.userPersona.name} and bantering with each other.`,
-            systemInstruction: "Simulate a chaotic, witty iMessage group chat in character.",
+            prompt: `Universe: ${uni.name}\nUser: ${uni.userPersona.name}\nMembers:\n${castDesc}\nRecent group chat:\n${recentGrp}\nGenerate 2-3 lowercase casual iMessage replies reacting directly to "${text}" and bantering with each other.`,
+            systemInstruction: "Simulate a chaotic, witty iMessage group chat in distinct character voices.",
             responseSchema: schema
           });
 
@@ -2990,7 +3008,17 @@ Generate 4 to 6 cascading social media comments reacting directly to ${uni.userP
             });
             saveState();
           }
-        } catch (err) {} finally {
+        } catch (err) {
+          const rLive = getLiveFormattedTime();
+          uni.groupChat.messages.push({
+            senderId: 'lorenzo',
+            senderName: 'Lorenzo',
+            text: `wei dengar tak apa ${uni.userPersona.name.split(' ')[0]} baru cakap tu 😂`,
+            time: rLive.chatHeader,
+            exactTime: rLive.timeStr
+          });
+          saveState();
+        } finally {
           typingEl.classList.add('hidden');
           renderChatMessages();
         }
@@ -3004,45 +3032,60 @@ Generate 4 to 6 cascading social media comments reacting directly to ${uni.userP
 
       try {
         const history = char.messages.slice(-10).map(m => `${m.sender === 'user' ? uni.userPersona.name : char.name}: ${m.text}`).join('\n');
-        const pastAi = char.messages.filter(m => m.sender === 'ai').slice(-4).map(m => m.text).join(' | ');
+        const pastAi = char.messages.filter(m => m.sender === 'ai').slice(-5).map(m => m.text).join(' | ');
 
         const schema = {
           type: "OBJECT",
           properties: {
             bubbles: { type: "ARRAY", items: { type: "STRING" } },
+            moodTag: { type: "STRING" },
             chemistryChange: { type: "NUMBER" }
           },
-          required: ["bubbles", "chemistryChange"]
+          required: ["bubbles", "moodTag", "chemistryChange"]
         };
 
         const res = await callGeminiAPI({
           prompt: `Universe: ${uni.name} (${uni.lore})
 User: ${uni.userPersona.name} (${uni.userPersona.bio})
 Character: ${char.name} (${char.handle})
-Personality: ${char.personality}
+Personality & Voice: ${char.personality}
 Current Relationship Vibe: ${char.relTitle} (${char.chemistry.toFixed(1)}%) — ${char.relInsight}
 
 Recent iMessage history:
 ${history}
 
-CRITICAL ANTI-REPETITION: Do NOT repeat phrases from: [${pastAi}].
-Reply to ${uni.userPersona.name} as 1 or 2 natural lowercase/casual texting bubbles matching your current vibe (${char.relTitle}), and return chemistryChange (between -0.5 and +1.5).`,
-          systemInstruction: "You are texting in an iMessage-style roleplay chat. Send 1-2 natural, punchy text bubbles without stage directions or asterisks.",
+Latest user message to answer directly: "${latestUserText}"
+
+CRITICAL RULES:
+1. Directly address what ${uni.userPersona.name} just said ("${latestUserText}").
+2. ANTI-REPETITION: NEVER reuse any phrase or sentence structure from: [${pastAi}].
+3. Match ${char.name}'s exact speech style and relationship level (${char.relTitle}).
+4. Return 1 or 2 natural texting bubbles, an updated short emoji+word moodTag (e.g. "😏 Smirking", "🔥 Flustered"), and chemistryChange (-0.5 to +1.5).`,
+          systemInstruction: "You are texting in an iMessage-style roleplay chat. Send 1-2 natural, punchy text bubbles tailored strictly to your character's voice.",
           responseSchema: schema
         });
 
-        const bubbles = Array.isArray(res.bubbles) && res.bubbles.length ? res.bubbles : ['...'];
+        const bubbles = Array.isArray(res.bubbles) && res.bubbles.length ? res.bubbles : [generateSmartFallbackReply(char, latestUserText)];
         const replyLive = getLiveFormattedTime();
         bubbles.forEach(b => {
           char.messages.push({ sender: 'ai', text: b, time: replyLive.chatHeader, exactTime: replyLive.timeStr });
         });
 
-        const delta = Number(res.chemistryChange || 0.5);
+        if (res.moodTag) {
+          char.mood = res.moodTag;
+          const moodEl = document.getElementById('chat-mood-pill');
+          if (moodEl) moodEl.textContent = char.mood;
+        }
+
+        const delta = Number(res.chemistryChange || 0.6);
         rewardStatProgress({ charId: char.id, chemDelta: delta, auraDelta: 0.2, xp: 35 });
         saveState();
       } catch (err) {
         const errLive = getLiveFormattedTime();
-        char.messages.push({ sender: 'ai', text: 'bold of you to say that. keep talking.', time: errLive.chatHeader, exactTime: errLive.timeStr });
+        const fallbackLine = generateSmartFallbackReply(char, latestUserText);
+        char.messages.push({ sender: 'ai', text: fallbackLine, time: errLive.chatHeader, exactTime: errLive.timeStr });
+        rewardStatProgress({ charId: char.id, chemDelta: 0.5, auraDelta: 0.2, xp: 30 });
+        saveState();
       } finally {
         typingEl.classList.add('hidden');
         renderChatMessages();
@@ -3050,7 +3093,7 @@ Reply to ${uni.userPersona.name} as 1 or 2 natural lowercase/casual texting bubb
     }
 
     /*************************************************************************
-     * 14. TAB 2: ROMIO / MULTI-UNIVERSE TIKTOK SLIDE IMPORT
+     * 14. TAB 2: LINK / MULTI-UNIVERSE TIKTOK SLIDE IMPORT
      *************************************************************************/
     let romioCustomPhoto = null;
 
@@ -3079,8 +3122,8 @@ Reply to ${uni.userPersona.name} as 1 or 2 natural lowercase/casual texting bubb
         <div class="p-4 space-y-5">
           <div class="flex items-center justify-between">
             <div>
-              <h2 class="text-lg font-display font-bold text-white">Romio Link Import & AU</h2>
-              <p class="text-xs text-zinc-400">Paste TikTok slide links to add characters to ${escapeHtml(uni.name)}</p>
+              <h2 class="text-lg font-display font-bold text-white">Link Import & AU Cast</h2>
+              <p class="text-xs text-zinc-400">Paste TikTok slide links or create characters in ${escapeHtml(uni.name)}</p>
             </div>
             <button type="button" onclick="openUniverseModal()" class="px-3 py-1.5 rounded-full bg-[#1E1E1E] border border-[#2E2E2E] text-xs font-bold text-[#1D9BF0]">
               Switch AU
@@ -3089,7 +3132,7 @@ Reply to ${uni.userPersona.name} as 1 or 2 natural lowercase/casual texting bubb
 
           <div class="bg-[#1A1A1A] border border-[#2A2A2A] rounded-2xl p-4 space-y-3">
             <div class="flex items-center gap-2">
-              <span class="px-2 py-0.5 rounded-md bg-fuchsia-500/15 text-fuchsia-400 text-[10px] font-bold uppercase">Romio TikTok Slide Parser</span>
+              <span class="px-2 py-0.5 rounded-md bg-fuchsia-500/15 text-fuchsia-400 text-[10px] font-bold uppercase">TikTok Slide / Character Import</span>
               <span class="text-[11px] text-zinc-500">Starts at 0.0%</span>
             </div>
 
@@ -3099,8 +3142,8 @@ Reply to ${uni.userPersona.name} as 1 or 2 natural lowercase/casual texting bubb
             </div>
 
             <div>
-              <label class="block text-[11px] font-semibold text-zinc-400 mb-1">Slide Text / Character Lore (Optional)</label>
-              <textarea id="romio-notes-input" rows="2" placeholder="Paste slide caption or character details here..." class="w-full bg-[#121212] border border-[#2E2E2E] focus:border-[#1D9BF0] rounded-xl p-3 text-xs text-white placeholder-zinc-500 outline-none resize-none"></textarea>
+              <label class="block text-[11px] font-semibold text-zinc-400 mb-1">Character Name / Slide Lore</label>
+              <textarea id="romio-notes-input" rows="2" placeholder="e.g. Regulus Black — Slytherin Seeker, quiet & sarcastic..." class="w-full bg-[#121212] border border-[#2E2E2E] focus:border-[#1D9BF0] rounded-xl p-3 text-xs text-white placeholder-zinc-500 outline-none resize-none"></textarea>
             </div>
 
             <div class="flex items-center justify-between gap-2">
@@ -3112,7 +3155,7 @@ Reply to ${uni.userPersona.name} as 1 or 2 natural lowercase/casual texting bubb
             </div>
 
             <button type="button" id="romio-import-btn" onclick="executeRomioTikTokImport()" class="w-full py-3 rounded-full bg-gradient-to-r from-[#1D9BF0] to-indigo-600 text-xs font-bold text-white shadow-lg transition active:scale-98">
-              ✨ Import Character & Scenario
+              ✨ Add Character to Universe
             </button>
           </div>
 
@@ -3140,13 +3183,13 @@ Reply to ${uni.userPersona.name} as 1 or 2 natural lowercase/casual texting bubb
       const url = document.getElementById('romio-url-input').value.trim();
       const notes = document.getElementById('romio-notes-input').value.trim();
       if (!url && !notes) {
-        showToast('Paste a TikTok link or slide text first!', '⚠️');
+        showToast('Paste a TikTok link or character notes first!', '⚠️');
         return;
       }
 
       const btn = document.getElementById('romio-import-btn');
       btn.disabled = true;
-      btn.textContent = '⏳ Extracting from TikTok slide...';
+      btn.textContent = '⏳ Creating character...';
 
       let oembedContext = '';
       if (url) {
@@ -3177,63 +3220,80 @@ Reply to ${uni.userPersona.name} as 1 or 2 natural lowercase/casual texting bubb
         };
 
         const charData = await callGeminiAPI({
-          prompt: `Universe: ${uni.name} (${uni.lore})\nUser: ${uni.userPersona.name}\nTikTok URL: ${url}\n${oembedContext}\nSlide Notes: ${notes}\n\nExtract the main character from this TikTok slide into a complete StatusVerse profile.`,
-          systemInstruction: "Create a rich character card from the TikTok slide details.",
+          prompt: `Universe: ${uni.name} (${uni.lore})\nUser: ${uni.userPersona.name}\nTikTok URL: ${url}\n${oembedContext}\nSlide Notes: ${notes}\n\nExtract the main character into a complete StatusVerse profile.`,
+          systemInstruction: "Create a rich character card from the slide details.",
           responseSchema: schema
         });
 
-        const initials = charData.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() || 'AU';
-        const live = getLiveFormattedTime();
-        const fb = makePortraitFallback(initials, '#1D9BF0', '#7C3AED');
-
-        const newChar = {
-          id: 'imp_' + Date.now(),
-          name: charData.name,
-          handle: charData.handle.startsWith('@') ? charData.handle : '@' + charData.handle,
-          verified: true,
-          house: charData.house || uni.name,
-          followers: '415.0M',
-          bio: charData.bio,
-          thoughtQuote: charData.storyText,
-          personality: charData.personality,
-          chemistry: 0.0,
-          delta: '0.0%',
-          unreadCount: 1,
-          customRelLabel: false,
-          relTitle: 'Stranger • 0.0%',
-          relInsight: 'Fresh import — start interacting to raise chemistry.',
-          avatar: romioCustomPhoto || fb,
-          defaultMovieAvatar: romioCustomPhoto || fb,
-          fallbackAvatar: fb,
-          banner: BANNER_PHOTOS.castle,
-          stories: [{ id: 'st_' + Date.now(), text: charData.storyText, image: null, time: live.stamp }],
-          messages: [{ sender: 'ai', text: charData.openingDm, time: live.chatHeader, exactTime: live.timeStr }]
-        };
-
-        uni.characters.unshift(newChar);
-        uni.posts.unshift({
-          id: 'impp_' + Date.now(),
-          authorId: newChar.id,
-          text: charData.postText,
-          time: live.stamp,
-          views: '68.4K',
-          reposts: '2.1K',
-          likes: 5400,
-          liked: false,
-          comments: []
-        });
-
-        romioCustomPhoto = null;
-        rewardStatProgress({ auraDelta: 0.8, xp: 50 });
-        saveState();
-        updateUnreadMessagesBadge();
-        switchTab('home');
+        addImportedCharToUni(uni, charData);
       } catch (err) {
-        showToast('Import failed—try adding slide notes too!', '⚠️');
+        const uni = getActiveUniverse();
+        const fallbackName = (notes.split(/[-—:]/)[0] || 'New Character').trim().slice(0, 26);
+        addImportedCharToUni(uni, {
+          name: fallbackName,
+          handle: '@' + fallbackName.toLowerCase().replace(/[^a-z0-9]/g, ''),
+          house: uni.name,
+          bio: notes || 'Newly arrived in the universe.',
+          personality: notes || 'Witty, mysterious, observant.',
+          storyText: 'Just joined the timeline.',
+          postText: `Finally here. Let’s see what all the fuss is about.`,
+          openingDm: `hey ${uni.userPersona.name.split(' ')[0].toLowerCase()}, heard a lot about you.`
+        });
       } finally {
         btn.disabled = false;
-        btn.textContent = '✨ Import Character & Scenario';
+        btn.textContent = '✨ Add Character to Universe';
       }
+    }
+
+    function addImportedCharToUni(uni, charData) {
+      const initials = charData.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() || 'AU';
+      const live = getLiveFormattedTime();
+      const fb = makePortraitFallback(initials, '#1D9BF0', '#7C3AED');
+
+      const newChar = {
+        id: 'imp_' + Date.now(),
+        name: charData.name,
+        handle: charData.handle.startsWith('@') ? charData.handle : '@' + charData.handle,
+        verified: true,
+        house: charData.house || uni.name,
+        followers: '415.0M',
+        bio: charData.bio,
+        thoughtQuote: charData.storyText,
+        personality: charData.personality,
+        mood: '✨ New Arrival',
+        streak: 1,
+        chemistry: 0.0,
+        delta: '0.0%',
+        unreadCount: 1,
+        customRelLabel: false,
+        relTitle: 'Stranger • 0.0%',
+        relInsight: 'Fresh import — start interacting to raise chemistry.',
+        avatar: romioCustomPhoto || fb,
+        defaultMovieAvatar: romioCustomPhoto || fb,
+        fallbackAvatar: fb,
+        banner: BANNER_PHOTOS.castle,
+        stories: [{ id: 'st_' + Date.now(), text: charData.storyText, image: null, time: live.stamp }],
+        messages: [{ sender: 'ai', text: charData.openingDm, time: live.chatHeader, exactTime: live.timeStr }]
+      };
+
+      uni.characters.unshift(newChar);
+      uni.posts.unshift({
+        id: 'impp_' + Date.now(),
+        authorId: newChar.id,
+        text: charData.postText,
+        time: live.stamp,
+        views: '68.4K',
+        reposts: '2.1K',
+        likes: 5400,
+        liked: false,
+        comments: []
+      });
+
+      romioCustomPhoto = null;
+      rewardStatProgress({ auraDelta: 0.8, xp: 50 });
+      saveState();
+      updateUnreadMessagesBadge();
+      switchTab('home');
     }
 
     /*************************************************************************
@@ -3752,9 +3812,11 @@ Reply to ${uni.userPersona.name} as 1 or 2 natural lowercase/casual texting bubb
             verified: true,
             house: name,
             followers: '100M',
-            bio: 'Use Romio / AU tab to paste TikTok slide links & build your cast!',
+            bio: 'Use Link / AU tab to paste TikTok slide links & build your cast!',
             thoughtQuote: `Welcome to ${name}.`,
             personality: 'Helpful, witty, welcoming.',
+            mood: '✨ Welcoming',
+            streak: 1,
             chemistry: 0.0,
             delta: '0.0%',
             unreadCount: 1,
@@ -3766,7 +3828,7 @@ Reply to ${uni.userPersona.name} as 1 or 2 natural lowercase/casual texting bubb
             fallbackAvatar: fb,
             banner: BANNER_PHOTOS.castle,
             stories: [{ id: 'gs_' + Date.now(), text: `Welcome to ${name}!`, image: null, time: live.stamp }],
-            messages: [{ sender: 'ai', text: `welcome to ${name}! go to the romio / au tab to paste tiktok slide links.`, time: live.chatHeader, exactTime: live.timeStr }]
+            messages: [{ sender: 'ai', text: `welcome to ${name}! go to the link / au tab to add characters.`, time: live.chatHeader, exactTime: live.timeStr }]
           }
         ],
         posts: [
