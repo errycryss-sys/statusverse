@@ -1530,13 +1530,17 @@
     /*************************************************************************
      * 7. GEMINI AI ENGINE (WITH SMART CONTEXTUAL OFFLINE FALLBACK)
      *************************************************************************/
-  async function callGeminiAPI({ prompt, systemInstruction = "", responseSchema = null }) {
+ async function callGeminiAPI({ prompt, systemInstruction = "", responseSchema = null }) {
       const activeKey = (appState && appState.geminiApiKey) ? appState.geminiApiKey.trim() : "";
       if (!activeKey) throw new Error('NO_API_KEY');
 
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`;
+      // Cuba guna gemini-2.5-flash tanpa responseSchema ketat supaya key AQ... diterima
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(activeKey)}`;
       const lang = getActiveLanguageObj();
-      const fullSystemInstruction = `${systemInstruction}\n\nMANDATORY LANGUAGE RULE: ${lang.instruction}`;
+      const jsonFormatNote = responseSchema
+        ? "\n\nCRITICAL OUTPUT FORMAT: Return ONLY valid raw JSON matching the requested fields. No markdown, no ```json fences."
+        : "";
+      const fullSystemInstruction = `${systemInstruction}\n\nMANDATORY LANGUAGE RULE: ${lang.instruction}${jsonFormatNote}`;
 
       const payload = {
         contents: [{ parts: [{ text: prompt }] }],
@@ -1546,34 +1550,35 @@
         }
       };
 
-      if (responseSchema) {
-        payload.generationConfig.responseMimeType = "application/json";
-        payload.generationConfig.responseSchema = responseSchema;
-      }
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-goog-api-key': activeKey
+        },
+        body: JSON.stringify(payload)
+      });
 
-      const delays = [600, 1400];
-      for (let attempt = 0; attempt <= delays.length; attempt++) {
+      if (!response.ok) {
+        let errDetail = `HTTP ${response.status}`;
         try {
-          const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'x-goog-api-key': activeKey
-            },
-            body: JSON.stringify(payload)
-          });
-          if (!response.ok) throw new Error(`HTTP ${response.status}`);
-          const result = await response.json();
-          const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (!text) throw new Error('Empty AI text');
-          return responseSchema ? JSON.parse(text) : text.trim();
-        } catch (err) {
-          if (attempt === delays.length) throw err;
-          await new Promise(r => setTimeout(r, delays[attempt]));
-        }
+          const errJson = await response.json();
+          errDetail = errJson?.error?.message || errDetail;
+        } catch (e) {}
+        showToast(`API Error: ${errDetail}`, '⚠️');
+        throw new Error(errDetail);
       }
-    }
 
+      const result = await response.json();
+      let text = result?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      if (!text) throw new Error('Empty AI text');
+
+      if (responseSchema) {
+        text = text.replace(/```json/gi, '').replace(/```/g, '').trim();
+        return JSON.parse(text);
+      }
+      return text.trim();
+    }
     function generateSmartFallbackReply(char, userText) {
       const clean = (userText || '').trim();
       const lower = clean.toLowerCase();
