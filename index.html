@@ -1532,76 +1532,82 @@
      *************************************************************************/
  async function callGeminiAPI({ prompt, systemInstruction = "", responseSchema = null }) {
       const activeKey = (appState && appState.geminiApiKey) ? appState.geminiApiKey.trim() : "";
-      if (!activeKey) throw new Error('NO_API_KEY');
+      if (!activeKey) throw new Error('Key kosong — tekan butang 🔑 AI kat atas dan tampal API key kau dulu.');
 
-      // Cuba guna gemini-2.5-flash tanpa responseSchema ketat supaya key AQ... diterima
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(activeKey)}`;
       const lang = getActiveLanguageObj();
       const jsonFormatNote = responseSchema
-        ? "\n\nCRITICAL OUTPUT FORMAT: Return ONLY valid raw JSON matching the requested fields. No markdown, no ```json fences."
+        ? "\n\nCRITICAL OUTPUT FORMAT: Return ONLY valid raw JSON matching the requested fields. No markdown, no ```json fences, no extra commentary."
         : "";
       const fullSystemInstruction = `${systemInstruction}\n\nMANDATORY LANGUAGE RULE: ${lang.instruction}${jsonFormatNote}`;
 
-      const payload = {
-        contents: [{ parts: [{ text: prompt }] }],
-        systemInstruction: { parts: [{ text: fullSystemInstruction }] },
-        generationConfig: {
-          temperature: 0.9
+      const models = ['gemini-2.5-flash', 'gemini-2.0-flash'];
+      let lastError = 'Unknown API error';
+
+      for (const model of models) {
+        const apiUrl = `[https://generativelanguage.googleapis.com/v1beta/models/$](https://generativelanguage.googleapis.com/v1beta/models/$){model}:generateContent?key=${encodeURIComponent(activeKey)}`;
+        const genConfig = { temperature: 0.9 };
+        if (model === 'gemini-2.5-flash') {
+          genConfig.thinkingConfig = { thinkingBudget: 0 };
         }
-      };
 
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-goog-api-key': activeKey
-        },
-        body: JSON.stringify(payload)
-      });
+        const payload = {
+          contents: [{ parts: [{ text: prompt }] }],
+          systemInstruction: { parts: [{ text: fullSystemInstruction }] },
+          generationConfig: genConfig
+        };
 
-      if (!response.ok) {
-        let errDetail = `HTTP ${response.status}`;
         try {
-          const errJson = await response.json();
-          errDetail = errJson?.error?.message || errDetail;
-        } catch (e) {}
-        showToast(`API Error: ${errDetail}`, '⚠️');
-        throw new Error(errDetail);
+          const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          if (!response.ok) {
+            let errMsg = `HTTP ${response.status}`;
+            try {
+              const errJson = await response.json();
+              errMsg = errJson?.error?.message || errMsg;
+            } catch (e) {}
+            lastError = `${model}: ${errMsg}`;
+            continue;
+          }
+
+          const result = await response.json();
+          const parts = result?.candidates?.[0]?.content?.parts || [];
+          const realPart = parts.find(p => !p.thought && p.text) || parts[parts.length - 1];
+          let text = (realPart?.text || '').trim();
+          if (!text) {
+            lastError = `${model}: Empty response`;
+            continue;
+          }
+
+          if (responseSchema) {
+            const cleaned = text.replace(/```json/gi, '').replace(/```/g, '').trim();
+            const firstBrace = cleaned.indexOf('{');
+            const firstBracket = cleaned.indexOf('[');
+            let startIdx = -1;
+            let endChar = '';
+            if (firstBrace !== -1 && (firstBracket === -1 || firstBrace < firstBracket)) {
+              startIdx = firstBrace;
+              endChar = '}';
+            } else if (firstBracket !== -1) {
+              startIdx = firstBracket;
+              endChar = ']';
+            }
+            if (startIdx !== -1 && cleaned.lastIndexOf(endChar) > startIdx) {
+              return JSON.parse(cleaned.slice(startIdx, cleaned.lastIndexOf(endChar) + 1));
+            }
+            return JSON.parse(cleaned);
+          }
+
+          return text;
+        } catch (err) {
+          lastError = `${model}: ${err.message || err}`;
+        }
       }
 
-      const result = await response.json();
-      let text = result?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-      if (!text) throw new Error('Empty AI text');
-
-      if (responseSchema) {
-        text = text.replace(/```json/gi, '').replace(/```/g, '').trim();
-        return JSON.parse(text);
-      }
-      return text.trim();
-    }
-    function generateSmartFallbackReply(char, userText) {
-      const clean = (userText || '').trim();
-      const lower = clean.toLowerCase();
-      const past = (char.messages || []).filter(m => m.sender === 'ai').map(m => m.text);
-      const pickFresh = (arr) => arr.find(line => !past.includes(line)) || arr[Math.floor(Math.random() * arr.length)];
-
-      if (char.id === 'draco') {
-        if (lower.includes('?')) return pickFresh([`why are you asking me that, potter? figure it out yourself.`, `careful with the questions. you might not like my honest answer.`]);
-        return pickFresh([`bold words for someone standing in my corridor, potter.`, `keep talking like that and see how quickly I wipe that smirk off your face.`]);
-      }
-      if (char.id === 'lorenzo') {
-        return pickFresh([`wei sumpah kelakar gila kau ni 😂 draco mesti tengah panas baca ni`, `oi janganlah expose sangat kat sini, mati aku nanti 😂`]);
-      }
-      if (char.id === 'mattheo') {
-        return pickFresh([`careful, princess. keep provoking me and I might actually take you up on that.`, `draco wishes he had half your nerve.`]);
-      }
-      if (char.id === 'tom') {
-        return pickFresh([`Interesting. Most people hesitate before speaking to me with such candour.`, `You play a dangerous game, Mywa. Continue.`]);
-      }
-      if (char.id === 'severus') {
-        return pickFresh([`Spare me the dramatics, Miss Potter.`, `Your lack of subtlety remains astounding.`]);
-      }
-      return pickFresh([`honestly? you always know how to start chaos around here.`, `wait—tell me everything, don’t leave out a single detail.`]);
+      throw new Error(lastError);
     }
 
     /*************************************************************************
@@ -3091,15 +3097,13 @@ CRITICAL RULES:
         saveState();
       } catch (err) {
         const errLive = getLiveFormattedTime();
-        const fallbackLine = generateSmartFallbackReply(char, latestUserText);
-        char.messages.push({ sender: 'ai', text: fallbackLine, time: errLive.chatHeader, exactTime: errLive.timeStr });
-        rewardStatProgress({ charId: char.id, chemDelta: 0.5, auraDelta: 0.2, xp: 30 });
+        const reason = err && err.message ? err.message : 'Unknown error';
+        char.messages.push({ sender: 'ai', text: `[⚠️ ${reason}]`, time: errLive.chatHeader, exactTime: errLive.timeStr });
         saveState();
       } finally {
         typingEl.classList.add('hidden');
         renderChatMessages();
       }
-    }
 
     /*************************************************************************
      * 14. TAB 2: LINK / MULTI-UNIVERSE TIKTOK SLIDE IMPORT
